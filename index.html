@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🌭 Hot Dog Leaderboard</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+  <h1>🌭 Hot Dog Eating Contest Leaderboard</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Rank</th>
+        <th>Contestant</th>
+        <th>Change</th>
+      </tr>
+    </thead>
+    <tbody id="leaderboard"></tbody>
+  </table>
+
+  <!-- Popup modal -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">×</span>
+      <h2 id="modal-name"></h2>
+      <img id="modal-photo" class="avatar-large">
+      <p><b>Total:</b> <span id="modal-total"></span></p>
+      <p><b>Average/day:</b> <span id="modal-avg"></span></p>
+      <div id="chart" style="width:100%;height:300px;"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
