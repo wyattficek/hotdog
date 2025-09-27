@@ -2,25 +2,73 @@
 const contestants = [
   {
     id: 1,
-    name: "Joey Chestnut",
+    name: "Connor",
     photo: "Cheers-removebg-preview.png",
-    rank: 1,
-    change: +1,
+    rank: 3,
+    change: 0,
     history: [55, 60, 62, 64, 70, 72, 75],
   },
   {
     id: 2,
-    name: "Takeru Kobayashi",
+    name: "David",
     photo: "https://i.pravatar.cc/100?img=2",
-    rank: 2,
-    change: -1,
+    rank: 7,
+    change: 0,
     history: [50, 52, 55, 57, 59, 61, 63],
   },
   {
     id: 3,
-    name: "Miki Sudo",
+    name: "Easton",
     photo: "https://i.pravatar.cc/100?img=3",
-    rank: 3,
+    rank: 1,
+    change: 0,
+    history: [40, 44, 46, 49, 52, 55, 57],
+  },
+  {
+    id: 4,
+    name: "Jonny",
+    photo: "https://i.pravatar.cc/100?img=3",
+    rank: 4,
+    change: 0,
+    history: [40, 44, 46, 49, 52, 55, 57],
+  },
+  {
+    id: 5,
+    name: "Justice",
+    photo: "https://i.pravatar.cc/100?img=3",
+    rank: 6,
+    change: 0,
+    history: [40, 44, 46, 49, 52, 55, 57],
+  },
+  {
+    id: 6,
+    name: "Mace",
+    photo: "https://i.pravatar.cc/100?img=3",
+    rank: 5,
+    change: 0,
+    history: [40, 44, 46, 49, 52, 55, 57],
+  },
+  {
+    id: 7,
+    name: "Wyatt",
+    photo: "https://i.pravatar.cc/100?img=3",
+    rank: 2,
+    change: 0,
+    history: [40, 44, 46, 49, 52, 55, 57],
+  },
+  {
+    id: 8,
+    name: "Ben",
+    photo: "https://i.pravatar.cc/100?img=3",
+    rank: 8,
+    change: 0,
+    history: [40, 44, 46, 49, 52, 55, 57],
+  },
+  {
+    id: 9,
+    name: "Rogelio",
+    photo: "https://i.pravatar.cc/100?img=3",
+    rank: 9,
     change: 0,
     history: [40, 44, 46, 49, 52, 55, 57],
   },
@@ -66,4 +114,5 @@ function showStats(c) {
 function closeModal() {
   document.getElementById("modal").style.display = "none";
 }
+
 
