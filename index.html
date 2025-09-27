@@ -49,29 +49,33 @@
     const SHEET_URL = "https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID/gviz/tq?tqx=out:csv";
 
     async function loadData() {
-      const res = await fetch(SHEET_URL);
-      const text = await res.text();
-      const rows = text.trim().split("\n").map(r => r.split(","));
-      const headers = rows[0];
-      const data = rows.slice(1).map(r => {
-        let obj = {};
-        headers.forEach((h, i) => obj[h] = r[i]);
-        return obj;
-      });
+  const res = await fetch(SHEET_URL);
+  const text = await res.text();
+  const rows = text.trim().split("\n").map(r => r.split(","));
 
-      // Convert numbers + history
-      data.forEach(d => {
-        d.Rank = parseInt(d.Rank);
-        d.Change = parseInt(d.Change);
-        d.history = headers.slice(4, headers.length - 1).map(h => parseInt(d[h] || 0));
-      });
+  // The "last updated" timestamp is in the first cell
+  const lastUpdated = rows[0][0] || "Unknown";
 
-      // Grab last updated from first row
-      const lastUpdated = data[0].LastUpdated || "Unknown";
+  // Contestant headers (skip first column)
+  const headers = rows[0].slice(1);
 
-      renderLeaderboard(data, lastUpdated);
-    }
+  // Contestant data (skip first row + first column)
+  const data = rows.slice(1).map(r => {
+    let obj = {};
+    headers.forEach((h, i) => obj[h] = r[i + 1]); // shift index
+    return obj;
+  });
 
+  // Convert numbers + history
+  data.forEach(d => {
+    d.Rank = parseInt(d.Rank);
+    d.Change = parseInt(d.Change);
+    d.history = headers.slice(4).map(h => parseInt(d[h] || 0));
+  });
+
+  renderLeaderboard(data, lastUpdated);
+}
+    
     function renderLeaderboard(contestants, lastUpdated) {
       const board = document.getElementById("leaderboard");
       board.innerHTML = `
@@ -125,6 +129,7 @@
   </script>
 </body>
 </html>
+
 
 
 
