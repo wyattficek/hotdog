@@ -3,7 +3,7 @@ const contestants = [
   {
     id: 1,
     name: "Joey Chestnut",
-    photo: "https://i.pravatar.cc/100?img=1",
+    photo: "Cheers-removebg-preview.png",
     rank: 1,
     change: +1,
     history: [55, 60, 62, 64, 70, 72, 75],
@@ -66,3 +66,4 @@ function showStats(c) {
 function closeModal() {
   document.getElementById("modal").style.display = "none";
 }
+
