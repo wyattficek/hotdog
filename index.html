@@ -156,13 +156,21 @@
   document.getElementById("overlay").style.display = "block";
   document.getElementById("popup").style.display = "block";
 }
-    document.getElementById("overlay").onclick = closePopup;
-    document.getElementById("closePopup").onclick = closePopup;
+    
+function closePopup() {
+  document.getElementById("overlay").style.display = "none";
+  document.getElementById("popup").style.display = "none";
+}
+
+// Attach listeners once when the page loads
+document.getElementById("overlay").addEventListener("click", closePopup);
+document.getElementById("closePopup").addEventListener("click", closePopup);
 
     loadData();
   </script>
 </body>
 </html>
+
 
 
 
