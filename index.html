@@ -108,11 +108,15 @@
       document.getElementById("popupAvg").textContent = avg;
 
       Plotly.newPlot("popupChart", [{
-        x: c.history.map((_, i) => `Day ${i+1}`),
-        y: c.history,
-        type: "bar",
-        marker: { color: "#ff7043" }
-      }], { margin: { t: 20, r: 10, l: 30, b: 30 }, autosize: true }, {responsive: true});
+  x: c.history.map((_, i) => `Day ${i+1}`),
+  y: c.history,
+  type: "bar",
+  marker: { color: "#ff7043" }
+}], {
+  margin: { t: 20, r: 10, l: 30, b: 30 },
+  autosize: true,
+  height: 200   // keep it compact
+}, {responsive: true});
 
       document.getElementById("overlay").style.display = "block";
       document.getElementById("popup").style.display = "block";
@@ -129,6 +133,7 @@
   </script>
 </body>
 </html>
+
 
 
 
