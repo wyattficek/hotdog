@@ -2,35 +2,107 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>🌭 Hot Dog Leaderboard</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Hot Dog Leaderboard</title>
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f8f8f8; }
+    .leaderboard { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .contestant { display: flex; align-items: center; padding: 8px; border-bottom: 1px solid #eee; cursor: pointer; }
+    .contestant:last-child { border-bottom: none; }
+    .photo { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-right: 12px; }
+    .name { flex: 1; font-weight: bold; }
+    .rank { width: 30px; text-align: center; }
+    .change { width: 30px; text-align: center; font-size: 14px; }
+    .change.up { color: green; }
+    .change.down { color: red; }
+    .popup { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 100; width: 400px; }
+    .popup h2 { margin-top: 0; }
+    .overlay { display: none; position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.5); z-index: 99; }
+  </style>
 </head>
 <body>
-  <h1>🌭 Hot Dog Eating Contest Leaderboard</h1>
-  <table>
-    <thead>
-      <tr>
-        <th>Rank</th>
-        <th>Contestant</th>
-        <th>Change</th>
-      </tr>
-    </thead>
-    <tbody id="leaderboard"></tbody>
-  </table>
+  <div class="leaderboard" id="leaderboard"></div>
 
-  <!-- Popup modal -->
-  <div id="modal" class="modal">
-    <div class="modal-content">
-      <span class="close" onclick="closeModal()">×</span>
-      <h2 id="modal-name"></h2>
-      <img id="modal-photo" class="avatar-large">
-      <p><b>Total:</b> <span id="modal-total"></span></p>
-      <p><b>Average/day:</b> <span id="modal-avg"></span></p>
-      <div id="chart" style="width:100%;height:300px;"></div>
-    </div>
+  <div class="overlay" id="overlay"></div>
+  <div class="popup" id="popup">
+    <h2 id="popupName"></h2>
+    <p><b>Total:</b> <span id="popupTotal"></span></p>
+    <p><b>Daily Average:</b> <span id="popupAvg"></span></p>
+    <div id="popupChart"></div>
   </div>
 
-  <script src="script.js"></script>
+  <script>
+    const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTZeHOJmtP-_j1SECEK5I-2tVvB4G4sV5VE8dQ6hgRUZ07KYNwPEsEt9TSaiDdQUsE-6AEZVaA2l967/pub?output=csv";
+
+    async function loadData() {
+      const res = await fetch(SHEET_URL);
+      const text = await res.text();
+      const rows = text.trim().split("\n").map(r => r.split(","));
+
+      const headers = rows[0];
+      const data = rows.slice(1).map(r => {
+        let obj = {};
+        headers.forEach((h, i) => obj[h] = r[i]);
+        return obj;
+      });
+
+      // Convert numbers
+      data.forEach(d => {
+        d.Rank = parseInt(d.Rank);
+        d.Change = parseInt(d.Change);
+        d.history = headers.slice(4).map(h => parseInt(d[h] || 0));
+      });
+
+      renderLeaderboard(data);
+    }
+
+    function renderLeaderboard(contestants) {
+      const board = document.getElementById("leaderboard");
+      board.innerHTML = "<h1>🌭 Hot Dog Leaderboard</h1>";
+
+      // Sort by rank
+      contestants.sort((a, b) => a.Rank - b.Rank);
+
+      contestants.forEach(c => {
+        const row = document.createElement("div");
+        row.className = "contestant";
+        row.innerHTML = `
+          <div class="rank">${c.Rank}</div>
+          <img class="photo" src="${c['Photo URL']}" alt="${c.Name}">
+          <div class="name">${c.Name}</div>
+          <div class="change ${c.Change > 0 ? "up" : (c.Change < 0 ? "down" : "")}">
+            ${c.Change > 0 ? "▲" : c.Change < 0 ? "▼" : "-"}
+          </div>
+        `;
+        row.onclick = () => showPopup(c);
+        board.appendChild(row);
+      });
+    }
+
+    function showPopup(c) {
+      document.getElementById("popupName").textContent = c.Name;
+      const total = c.history.reduce((a, b) => a + b, 0);
+      const avg = (total / c.history.length).toFixed(1);
+      document.getElementById("popupTotal").textContent = total;
+      document.getElementById("popupAvg").textContent = avg;
+
+      Plotly.newPlot("popupChart", [{
+        x: c.history.map((_, i) => `Day ${i+1}`),
+        y: c.history,
+        type: "bar"
+      }], {margin:{t:20}});
+
+      document.getElementById("overlay").style.display = "block";
+      document.getElementById("popup").style.display = "block";
+    }
+
+    document.getElementById("overlay").onclick = () => {
+      document.getElementById("overlay").style.display = "none";
+      document.getElementById("popup").style.display = "none";
+    };
+
+    loadData();
+  </script>
 </body>
 </html>
+
