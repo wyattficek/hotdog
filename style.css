@@ -67,3 +67,15 @@ tr:hover {
 
 .up { color: green; }
 .down { color: red; }
+
+.popupChartContainer {
+  width: 100%;
+  height: 220px;
+  margin-top: 10px;
+}
+#popupChart {
+  width: 100%;
+  height: 100%;
+}
+
+
