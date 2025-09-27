@@ -76,29 +76,56 @@
   renderLeaderboard(data, lastUpdated);
 }
     
-    function renderLeaderboard(contestants, lastUpdated) {
-      const board = document.getElementById("leaderboard");
-      board.innerHTML = `
-        <h1>🌭 Hot Dog Leaderboard</h1>
-        <div class="last-updated">Last updated: ${lastUpdated}</div>
-      `;
+   function renderLeaderboard(contestants, lastUpdated) {
+  const board = document.getElementById("leaderboard");
+  board.innerHTML = `
+    <h1>🌭 Hot Dog Leaderboard</h1>
+    <div class="last-updated">Last updated: ${lastUpdated}</div>
+  `;
 
-      contestants.sort((a, b) => a.Rank - b.Rank);
-      contestants.forEach(c => {
-        const row = document.createElement("div");
-        row.className = "contestant";
-        row.innerHTML = `
-          <div class="rank">${c.Rank}</div>
-          <img class="photo" src="${c['Photo URL']}" alt="${c.Name}">
-          <div class="name">${c.Name}</div>
-          <div class="change ${c.Change > 0 ? "up" : (c.Change < 0 ? "down" : "")}">
-            ${c.Change > 0 ? "▲" : c.Change < 0 ? "▼" : "-"}
-          </div>
-        `;
-        row.onclick = () => showPopup(c);
-        board.appendChild(row);
-      });
-    }
+  // Header row
+  const headerRow = document.createElement("div");
+  headerRow.className = "contestant";
+  headerRow.style.fontWeight = "bold";
+  headerRow.innerHTML = `
+    <div class="rank">#</div>
+    <div style="flex:1;">Name</div>
+    <div class="total-col">Total 🌭</div>
+    <div class="change">Δ</div>
+  `;
+  board.appendChild(headerRow);
+
+  // Contestants
+  contestants.sort((a, b) => a.Rank - b.Rank);
+  contestants.forEach(c => {
+    const row = document.createElement("div");
+    row.className = "contestant";
+
+    // Compute total hot dogs
+    const total = c.history.reduce((a, b) => a + b, 0);
+
+    // Rank coloring
+    let rankClass = "";
+    if (c.Rank === 1) rankClass = "gold";
+    else if (c.Rank === 2) rankClass = "silver";
+    else if (c.Rank === 3) rankClass = "bronze";
+
+    // Add crown to first place name
+    const displayName = c.Rank === 1 ? "👑 " + c.Name : c.Name;
+
+    row.innerHTML = `
+      <div class="rank ${rankClass}">${c.Rank}</div>
+      <img class="photo" src="${c['Photo URL']}" alt="${c.Name}">
+      <div class="name" style="flex:1;">${displayName}</div>
+      <div class="total-col">🌭 ${total}</div>
+      <div class="change ${c.Change > 0 ? "up" : (c.Change < 0 ? "down" : "")}">
+        ${c.Change > 0 ? "▲" : c.Change < 0 ? "▼" : "-"}
+      </div>
+    `;
+    row.onclick = () => showPopup(c);
+    board.appendChild(row);
+  });
+}
 
     function showPopup(c) {
       document.getElementById("popupName").textContent = c.Name;
@@ -133,6 +160,7 @@
   </script>
 </body>
 </html>
+
 
 
 
