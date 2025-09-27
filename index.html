@@ -128,31 +128,34 @@
 }
 
     function showPopup(c) {
-      document.getElementById("popupName").textContent = c.Name;
-      const total = c.history.reduce((a, b) => a + b, 0);
-      const avg = (total / c.history.length).toFixed(1);
-      document.getElementById("popupTotal").textContent = total;
-      document.getElementById("popupAvg").textContent = avg;
+  document.getElementById("popupName").textContent = c.Name;
+  const total = c.history.reduce((a, b) => a + b, 0);
+  const avg = (total / c.history.length).toFixed(1);
+  document.getElementById("popupTotal").textContent = total;
+  document.getElementById("popupAvg").textContent = avg;
 
-      Plotly.newPlot("popupChart", [{
-  x: c.history.map((_, i) => `Day ${i+1}`),
-  y: c.history,
-  type: "bar",
-  marker: { color: "#ff7043" }
-}], {
-  margin: { t: 20, r: 10, l: 30, b: 30 },
-  autosize: true,
-  height: 200   // keep it compact
-}, {responsive: true});
+  Plotly.newPlot("popupChart", [{
+    x: c.history.map((_, i) => `Day ${i+1}`),
+    y: c.history,
+    type: "bar",
+    marker: { color: "#ff7043" }
+  }], {
+    margin: { t: 20, r: 10, l: 30, b: 30 },
+    autosize: true,
+    height: 200,
+    xaxis: { automargin: true, tickangle: -45 },
+    yaxis: { automargin: true }
+  }, {responsive: true}).then(() => {
+    // Force autoscale to full extent (like double-tap)
+    Plotly.relayout("popupChart", {
+      'xaxis.autorange': true,
+      'yaxis.autorange': true
+    });
+  });
 
-      document.getElementById("overlay").style.display = "block";
-      document.getElementById("popup").style.display = "block";
-    }
-
-    function closePopup() {
-      document.getElementById("overlay").style.display = "none";
-      document.getElementById("popup").style.display = "none";
-    }
+  document.getElementById("overlay").style.display = "block";
+  document.getElementById("popup").style.display = "block";
+}
     document.getElementById("overlay").onclick = closePopup;
     document.getElementById("closePopup").onclick = closePopup;
 
@@ -160,6 +163,7 @@
   </script>
 </body>
 </html>
+
 
 
 
