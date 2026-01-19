@@ -143,8 +143,33 @@
   document.getElementById("popupTotal").textContent = total;
   document.getElementById("popupAvg").textContent = avg;
 
-  Plotly.newPlot("popupChart", [{
-  x: c.dates,        // ← real dates from Google Sheet
+const maxXTicks = 6; // total labels including first & last
+const totalDays = c.dates.length;
+
+let tickIndices = new Set();
+
+// Always include first and last
+tickIndices.add(0);
+tickIndices.add(totalDays - 1);
+
+// Calculate remaining slots
+const remaining = maxXTicks - 2;
+if (remaining > 0 && totalDays > maxXTicks) {
+  const step = (totalDays - 1) / (remaining + 1);
+  for (let i = 1; i <= remaining; i++) {
+    tickIndices.add(Math.round(i * step));
+  }
+}
+
+// Sort indices
+tickIndices = Array.from(tickIndices).sort((a, b) => a - b);
+
+// Build ticks
+const tickVals = tickIndices.map(i => c.dates[i]);
+const tickText = tickVals;
+
+Plotly.newPlot("popupChart", [{
+  x: c.dates,
   y: c.history,
   type: "bar",
   marker: { color: "#ff7043" }
@@ -154,12 +179,15 @@
   height: 200,
   xaxis: {
     type: "category",
+    tickmode: "array",
+    tickvals: tickVals,
+    ticktext: tickText,
     tickangle: -45,
     automargin: true
   },
   yaxis: {
-    automargin: true,
-    title: "Hot Dogs 🌭"
+    title: "Hot Dogs 🌭",
+    automargin: true
   }
 }, { responsive: true }).then(() => {
   Plotly.relayout("popupChart", {
@@ -185,6 +213,7 @@ document.getElementById("closePopup").addEventListener("click", closePopup);
   </script>
 </body>
 </html>
+
 
 
 
