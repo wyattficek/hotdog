@@ -72,11 +72,14 @@
     return obj;
   });
 
-  // Convert numbers + history
+  // Convert numbers + history + dates
   data.forEach(d => {
     d.Rank = parseInt(d.Rank);
     d.Change = parseInt(d.Change);
-    d.history = headers.slice(4).map(h => parseInt(d[h] || 0));
+
+  // Date columns start after: Rank, Name, Photo URL, Change
+    d.dates = headers.slice(4); 
+    d.history = d.dates.map(h => parseInt(d[h] || 0));
   });
 
   renderLeaderboard(data, lastUpdated);
@@ -141,23 +144,29 @@
   document.getElementById("popupAvg").textContent = avg;
 
   Plotly.newPlot("popupChart", [{
-    x: c.history.map((_, i) => `Day ${i+1}`),
-    y: c.history,
-    type: "bar",
-    marker: { color: "#ff7043" }
-  }], {
-    margin: { t: 20, r: 10, l: 30, b: 30 },
-    autosize: true,
-    height: 200,
-    xaxis: { automargin: true, tickangle: -45 },
-    yaxis: { automargin: true }
-  }, {responsive: true}).then(() => {
-    // Force autoscale to full extent (like double-tap)
-    Plotly.relayout("popupChart", {
-      'xaxis.autorange': true,
-      'yaxis.autorange': true
-    });
+  x: c.dates,        // ← real dates from Google Sheet
+  y: c.history,
+  type: "bar",
+  marker: { color: "#ff7043" }
+}], {
+  margin: { t: 20, r: 10, l: 30, b: 60 },
+  autosize: true,
+  height: 200,
+  xaxis: {
+    type: "category",
+    tickangle: -45,
+    automargin: true
+  },
+  yaxis: {
+    automargin: true,
+    title: "Hot Dogs 🌭"
+  }
+}, { responsive: true }).then(() => {
+  Plotly.relayout("popupChart", {
+    'xaxis.autorange': true,
+    'yaxis.autorange': true
   });
+});
 
   document.getElementById("overlay").style.display = "block";
   document.getElementById("popup").style.display = "block";
@@ -176,6 +185,7 @@ document.getElementById("closePopup").addEventListener("click", closePopup);
   </script>
 </body>
 </html>
+
 
 
 
